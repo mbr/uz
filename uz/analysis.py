@@ -107,7 +107,7 @@ class GZipHeader(FormatHeader):
         return gzip.open(file.name)
 
     @classmethod
-    def get_command(cls, action, parts):
+    def get_command(cls, action, cmd_args, parts):
         parts.pop()
 
         cmd = ['gunzip', '--to-stdout']
@@ -146,13 +146,16 @@ class TarHeader(FormatHeader):
             return hfmt
 
     @classmethod
-    def get_command(cls, action, parts):
+    def get_command(cls, action, cmd_args, parts):
         # parts[-1] is the tar command
         parts.pop()
 
         assert action in ('list', 'extract')
 
         tar_cmd = ['tar', '--' + action]
+
+        if cmd_args['verbose']:
+            tar_cmd.append('--verbose')
 
         if parts:
             tar_flag = getattr(parts[-1], 'tar_flag', None)
@@ -186,13 +189,13 @@ formats = [
 ]
 
 
-def get_command(nestings, action, filename):
+def get_command(nestings, action, cmd_args, filename):
     ns = nestings[:]
 
     cmds = []
     while ns:
         cmds.insert(0, [arg if arg is not None else filename
-                        for arg in ns[-1].get_command(action, ns)])
+                        for arg in ns[-1].get_command(action, cmd_args, ns)])
 
     return cmds
 

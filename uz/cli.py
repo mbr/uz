@@ -18,12 +18,17 @@ def info(msg):
 @click.command()
 @click.option('-A', '--analyze-only', is_flag=True)
 @click.option('-D', '--debug', is_flag=True)
+@click.option('-v', '--verbose', is_flag=True)
 @click.option('-l', '--list', 'action', flag_value='list')
 @click.option('-x', '--extract', 'action', flag_value='extract', default=True)
 @click.argument('files', nargs=-1, type=click.File(mode='rb', lazy=False))
-def uz(files, analyze_only, debug, action='extract'):
+def uz(files, analyze_only, debug, verbose, action='extract'):
     global show_info
     show_info = debug or analyze_only
+
+    cmd_args = {
+        'verbose': verbose,
+    }
 
     for file in files:
         nesting = unravel(file)
@@ -35,7 +40,7 @@ def uz(files, analyze_only, debug, action='extract'):
         if not nesting:
             continue
 
-        cmds = get_command(nesting, action, file.name)
+        cmds = get_command(nesting, action, cmd_args, file.name)
         info('cmd: {}'.format(' | '.join(' '.join(args) for args in cmds)))
 
         if analyze_only:
