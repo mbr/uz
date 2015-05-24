@@ -43,6 +43,7 @@ class FormatHeader(object):
 class BZipHeader(FormatHeader):
     name = 'BZip'
     compression = True
+    tar_flag = '--bzip2'
 
     @classmethod
     def from_buf(cls, buf):
@@ -66,6 +67,7 @@ class BZipHeader(FormatHeader):
 class XZHeader(FormatHeader):
     name = 'xz'
     compression = True
+    tar_flag = '--xz'
 
     @classmethod
     def from_buf(cls, buf):
@@ -81,6 +83,7 @@ class XZHeader(FormatHeader):
 class GZipHeader(FormatHeader):
     name = 'gzip'
     compression = True
+    tar_flag = '--gunzip'
 
     @classmethod
     def from_buf(cls, buf):
@@ -102,6 +105,14 @@ class GZipHeader(FormatHeader):
     @classmethod
     def open(cls, file):
         return gzip.open(file.name)
+
+    @classmethod
+    def get_command(cls, action, parts):
+        parts.pop()
+
+        cmd = ['gunzip', '--to-stdout']
+
+        return cmd
 
 
 class ZipHeader(FormatHeader):
@@ -134,6 +145,23 @@ class TarHeader(FormatHeader):
             hfmt.extras['version'] = unpack('<H', buf[263:265])[0]
             return hfmt
 
+    @classmethod
+    def get_command(cls, action, parts):
+        # parts[-1] is the tar command
+        parts.pop()
+
+        assert action in ('list', 'extract')
+
+        tar_cmd = ['tar', '--' + action]
+
+        if parts:
+            tar_flag = getattr(parts[-1], 'tar_flag', None)
+            if tar_flag:
+                parts.pop()
+                tar_cmd.append(tar_flag)
+
+        return tar_cmd
+
 
 class SmartBuffer(object):
     def __init__(self, reader):
@@ -156,6 +184,17 @@ formats = [
     ZipHeader,
     TarHeader,
 ]
+
+
+def get_command(nestings, action, filename):
+    ns = nestings[:]
+
+    cmds = []
+    while ns:
+        cmds.insert(0, [arg if arg is not None else filename
+                        for arg in ns[-1].get_command(action, ns)])
+
+    return cmds
 
 
 def unravel(file):
