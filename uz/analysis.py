@@ -60,7 +60,7 @@ class BZipHeader(FormatHeader):
 
     @classmethod
     def open(cls, file):
-        return bz2.open(file.name)
+        return bz2.BZ2File(file.name)
 
 
 class XZHeader(FormatHeader):
