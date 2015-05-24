@@ -20,7 +20,7 @@ setup(
     url='http://github.com/mbr/uz',
     license='MIT',
     packages=find_packages(exclude=['tests']),
-    install_requires=['click', 'filemagic'],
+    install_requires=['click', 'backports.lzma'],
     entry_points={
         'console_scripts': [
             'uz = uz.cli:uz',
