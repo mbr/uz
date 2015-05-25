@@ -1,8 +1,8 @@
+import io
 from operator import attrgetter
-
-import click
 import subprocess
 
+import click
 
 from .analysis import unravel, get_command
 
@@ -21,7 +21,8 @@ def info(msg):
 @click.option('-v', '--verbose', is_flag=True)
 @click.option('-l', '--list', 'action', flag_value='list')
 @click.option('-x', '--extract', 'action', flag_value='extract', default=True)
-@click.argument('files', nargs=-1, type=click.File(mode='rb', lazy=False))
+@click.argument('files', nargs=-1,
+                type=click.Path(dir_okay=False, exists=True))
 def uz(files, analyze_only, debug, verbose, action='extract'):
     global show_info
     show_info = debug or analyze_only
@@ -30,7 +31,8 @@ def uz(files, analyze_only, debug, verbose, action='extract'):
         'verbose': verbose,
     }
 
-    for file in files:
+    for fn in files:
+        file = io.open(fn, 'rb')
         nesting = unravel(file)
 
         info('{}: {}'.format(
