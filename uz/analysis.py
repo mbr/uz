@@ -166,20 +166,6 @@ class TarHeader(FormatHeader):
         return tar_cmd
 
 
-class SmartBuffer(object):
-    def __init__(self, reader):
-        self.reader = reader
-        self.buffer = b''
-
-    def __getitem__(self, sl):
-        max_pos = sl + 1 if isinstance(sl, int) else sl.stop
-
-        buflen = len(self.buffer)
-        if buflen < max_pos:
-            self.buffer += self.reader.read(max_pos - buflen)
-        return self.buffer[sl]
-
-
 formats = [
     XZHeader,
     GZipHeader,

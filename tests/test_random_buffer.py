@@ -10,27 +10,26 @@ def val():
 
 
 @pytest.fixture
-def sbuf(val):
+def stream(val):
     return StringIO(val)
 
 
 @pytest.fixture
-def rabuf(sbuf):
-    return RandomAccessBuffer(sbuf)
+def rabuf(stream):
+    return RandomAccessBuffer(stream)
 
 
-def test_straight_read(rabuf, val):
-    assert rabuf.read() == val
+def test_full_slice(rabuf, val):
+    assert rabuf[:] == val
 
 
 def test_read_twice(rabuf):
-    assert rabuf.read(3) == 'abc'
+    assert rabuf[0:3] == 'abc'
     assert rabuf[0:3] == 'abc'
 
 
-def test_seek(rabuf):
-    rabuf.seek(3)
-
-    assert rabuf.read(3) == 'def'
-
+def test_random_read(rabuf):
     assert rabuf[0:6] == 'abcdef'
+    assert rabuf[3] == 'd'
+    assert rabuf[-2] == 'y'
+    assert rabuf[28:30] == 'cd'
