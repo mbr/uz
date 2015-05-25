@@ -2,10 +2,13 @@ from collections import OrderedDict
 import bz2
 from datetime import datetime
 import gzip
+import io
 from struct import unpack
 from time import localtime
 
 from backports import lzma
+
+from .util import RandomAccessBuffer
 
 
 class FormatHeader(object):
@@ -187,7 +190,7 @@ def get_command(nestings, action, cmd_args, filename):
 
 
 def unravel(file):
-    buf = SmartBuffer(file)
+    buf = RandomAccessBuffer(io.BufferedReader(file))
 
     for fmt in formats:
         hfmt = fmt.from_buf(buf)
