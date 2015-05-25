@@ -15,6 +15,10 @@ def info(msg):
         click.echo(msg, err=True)
 
 
+def warn(msg):
+    click.echo('warning: ' + msg, err=True)
+
+
 @click.command()
 @click.option('-A', '--analyze-only', is_flag=True)
 @click.option('-D', '--debug', is_flag=True)
@@ -41,6 +45,10 @@ def uz(files, analyze_only, debug, verbose, action='extract'):
 
         if not nesting:
             continue
+
+        if len(nesting) > 1 and not nesting[-1].streamable:
+            nesting.pop()
+            warn('cannot unpack zip archive from stream, need to run twice')
 
         cmds = get_command(nesting, action, cmd_args, file.name)
         info('cmd: {}'.format(' | '.join(' '.join(args) for args in cmds)))

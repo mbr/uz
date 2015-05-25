@@ -15,6 +15,7 @@ class FormatHeader(object):
     name = u'Unnamed header format'
     compression = False
     archive = False
+    streamable = True
 
     def __init__(self, extras=None):
         self.extras = extras or OrderedDict()
@@ -138,6 +139,7 @@ class ZipHeader(FormatHeader):
     name = 'zipfile'
     compression = True
     archive = True
+    streamable = False
 
     @classmethod
     def from_buf(cls, buf):
