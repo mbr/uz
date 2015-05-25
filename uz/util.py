@@ -127,7 +127,7 @@ class GzipReader(io.RawIOBase):
             )
         else:
             # a crappy heuristic, but a rather safe one
-            raw = self.input_stream.read1(blen)
+            raw = self.input_stream.read(blen)
             if not raw:
                 chunk = b''
 

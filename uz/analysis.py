@@ -1,14 +1,14 @@
 from collections import OrderedDict
 import bz2
 from datetime import datetime
-import gzip
 import io
 from struct import unpack
 from time import localtime
 
 from backports import lzma
 
-from .util import RandomAccessBuffer
+from .util import (RandomAccessBuffer, DecompressingReader, GzipReader,
+                   BufferView)
 
 
 class FormatHeader(object):
@@ -63,8 +63,16 @@ class BZipHeader(FormatHeader):
             return hfmt
 
     @classmethod
+    def get_command(cls, action, cmd_args, parts):
+        parts.pop()
+
+        cmd = ['bunzip2', '--stdout']
+
+        return cmd
+
+    @classmethod
     def open(cls, file):
-        return bz2.BZ2File(file.name)
+        return DecompressingReader(bz2.BZ2Decompressor().decompress, file)
 
 
 class XZHeader(FormatHeader):
@@ -79,8 +87,16 @@ class XZHeader(FormatHeader):
             return hfmt
 
     @classmethod
+    def get_command(cls, action, cmd_args, parts):
+        parts.pop()
+
+        cmd = ['xz', '--decompress', '--stdout']
+
+        return cmd
+
+    @classmethod
     def open(cls, file):
-        return lzma.open(file.name)
+        return DecompressingReader(lzma.LZMADecompressor().decompress, file)
 
 
 class GZipHeader(FormatHeader):
@@ -106,16 +122,16 @@ class GZipHeader(FormatHeader):
             return hfmt
 
     @classmethod
-    def open(cls, file):
-        return gzip.open(file.name)
-
-    @classmethod
     def get_command(cls, action, cmd_args, parts):
         parts.pop()
 
         cmd = ['gunzip', '--to-stdout']
 
         return cmd
+
+    @classmethod
+    def open(cls, file):
+        return GzipReader(file)
 
 
 class ZipHeader(FormatHeader):
@@ -199,6 +215,6 @@ def unravel(file):
             if hfmt.archive or not hfmt.can_open:
                 return [hfmt]
             else:
-                return [hfmt] + unravel(hfmt.open(file))
+                return [hfmt] + unravel(hfmt.open(BufferView(buf)))
 
     return []
