@@ -179,4 +179,4 @@ class GzipReader(io.RawIOBase):
             self.gzip_CRC = self._read_n(2)
 
         # negative window size supresses headers
-        self._zlibdec = zlib.decompressobj(-8)
+        self._zlibdec = zlib.decompressobj(-zlib.MAX_WBITS)
