@@ -43,6 +43,27 @@ class RandomAccessBuffer(object):
         return self.buffer[pos]
 
 
+class BufferView(io.RawIOBase):
+    def __init__(self, buffer, pos=0):
+        super(BufferView)
+        self.buf = buffer
+        self.pos = pos
+
+    def readable(self):
+        return True
+
+    def readinto(self, b):
+        # ensure enough data is available
+        self.buf._read_until(self.pos + len(b))
+
+        end = min(self.pos + len(b), len(self.buf.buffer))
+        chunk = self.buf.buffer[self.pos:end]
+        self.pos += len(chunk)
+
+        b[:len(chunk)] = chunk
+        return len(chunk)
+
+
 class DecompressingReader(io.RawIOBase):
     def __init__(self, decompress, source, bufsize=4096):
         super(DecompressingReader, self).__init__()

@@ -1,7 +1,7 @@
 from io import BytesIO, BufferedReader
 
 import pytest
-from uz.util import RandomAccessBuffer
+from uz.util import RandomAccessBuffer, BufferView
 
 
 @pytest.fixture
@@ -42,3 +42,17 @@ def test_slices(rabuf, val):
                           'abcdefghijklmnopqrstuvwx')
     assert rabuf[:] == val
     assert rabuf[:2] == 'ab'
+
+
+def test_buffer_view(rabuf):
+    assert rabuf[2:4] == 'cd'
+
+    v = BufferView(rabuf, 1)
+    assert v.read(2) == 'bc'
+
+    v = BufferView(rabuf, 0)
+    assert v.read(2) == 'ab'
+
+    # this does work because the underlying stream is buffered
+    v = BufferView(rabuf, 0)
+    assert v.read(10) == 'abcdefghij'
