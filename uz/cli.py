@@ -46,7 +46,7 @@ def uz(files, analyze_only, debug, verbose, action='extract'):
         info('cmd: {}'.format(' | '.join(' '.join(args) for args in cmds)))
 
         if analyze_only:
-            return
+            return 0
 
         if not nesting[-1].archive:
             raise RuntimeError('Non-archive extraction unsupported atm')
