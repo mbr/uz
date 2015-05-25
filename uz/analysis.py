@@ -151,6 +151,18 @@ class ZipHeader(FormatHeader):
 
             return hfmt
 
+    def get_command(cls, action, cmd_args, parts):
+        parts.pop()
+
+        zip_cmd = ['unzip']
+
+        if action == 'list':
+            zip_cmd.append('-l')
+
+        zip_cmd.append(None)
+
+        return zip_cmd
+
 
 class TarHeader(FormatHeader):
     name = 'tarfile'
