@@ -60,11 +60,19 @@ def uz(files, analyze_only, debug, verbose, action, keep):
         info('cmd: {}'.format(' | '.join(' '.join(args) for args in cmds)))
 
         if analyze_only:
-            return 0
+            continue
 
+        # implement the listing directly
         if not nesting[-1].archive and action == 'list':
             click.echo('{}'.format(single_file), err=True)
-            return 0
+            continue
+
+        if single_file:
+            if os.path.exists(single_file) and not click.confirm(
+                '{} already exists, do you wish to overwrite?'
+                .format(single_file)
+            ):
+                continue
 
         # repoen
         stdin = open(fn, 'rb')
@@ -75,10 +83,6 @@ def uz(files, analyze_only, debug, verbose, action, keep):
             if cmds:
                 stdout = subprocess.PIPE
             elif single_file:
-                if os.path.exists(single_file) and not click.confirm(
-                    '{} already exists, do you wish to overwrite?'.format(
-                        single_file)):
-                    return 0
                 stdout = open(single_file, 'wb')
             else:
                 # just regular output here
