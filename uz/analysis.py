@@ -40,6 +40,16 @@ class FormatHeader(object):
     def can_open(self):
         return callable(getattr(self, 'open', None))
 
+    def strip_ending(self, filename):
+        if not filename.endswith(self.file_ending):
+            raise ValueError('{}: {!r} does not end with {}'.format(
+                self.__class__.__name__,
+                filename,
+                self.file_ending
+            ))
+
+        return filename[:-len(self.file_ending)]
+
     def __str__(self):
         return unicode(self).encode('utf8')
 
@@ -48,6 +58,7 @@ class BZipHeader(FormatHeader):
     name = 'BZip'
     compression = True
     tar_flag = '--bzip2'
+    file_ending = '.bz2'
 
     @classmethod
     def from_buf(cls, buf):
@@ -80,6 +91,7 @@ class XZHeader(FormatHeader):
     name = 'xz'
     compression = True
     tar_flag = '--xz'
+    file_ending = '.xz'
 
     @classmethod
     def from_buf(cls, buf):
@@ -104,6 +116,7 @@ class GZipHeader(FormatHeader):
     name = 'gzip'
     compression = True
     tar_flag = '--gunzip'
+    file_ending = '.gz'
 
     @classmethod
     def from_buf(cls, buf):
@@ -140,6 +153,7 @@ class ZipHeader(FormatHeader):
     compression = True
     archive = True
     streamable = False
+    file_ending = '.zip'
 
     @classmethod
     def from_buf(cls, buf):
@@ -170,6 +184,7 @@ class TarHeader(FormatHeader):
     name = 'tarfile'
     compression = False
     archive = True
+    file_ending = '.tar'
 
     @classmethod
     def from_buf(cls, buf):
@@ -217,6 +232,15 @@ def get_command(nestings, action, cmd_args, filename):
                         for arg in ns[-1].get_command(action, cmd_args, ns)])
 
     return cmds
+
+
+def get_filename(nestings, filename):
+    ns = nestings[:]
+
+    while ns:
+        filename = ns.pop(0).strip_ending(filename)
+
+    return filename
 
 
 def unravel(file):
