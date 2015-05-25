@@ -45,6 +45,7 @@ class RandomAccessBuffer(object):
 
 class DecompressingReader(io.RawIOBase):
     def __init__(self, decompress, source, bufsize=4096):
+        super(DecompressingReader, self).__init__()
         self.source = source
         self.decompress = decompress
         self.bufsize = bufsize
@@ -75,6 +76,7 @@ class GzipReader(io.RawIOBase):
     _HEADER = '<BBBBIBB'
 
     def __init__(self, input_stream):
+        super(GzipReader, self).__init__()
         self.input_stream = input_stream
         self.initialized = False
 
