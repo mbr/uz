@@ -13,7 +13,7 @@ def read(fname):
 setup(
     name='uz',
     version='0.1dev',
-    description='uz calls the correct program to extract packages',
+    description='uz extracts files of all sorts',
     long_description=read('README.rst'),
     author='Marc Brinkmann',
     author_email='git@marcbrinkmann.de',
