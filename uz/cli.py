@@ -21,6 +21,7 @@ def warn(msg):
 
 
 @click.command()
+@click.version_option()
 @click.option('-A', '--analyze-only', is_flag=True)
 @click.option('-D', '--debug', is_flag=True)
 @click.option('-v', '--verbose', is_flag=True)
