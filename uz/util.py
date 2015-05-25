@@ -9,9 +9,14 @@ class RandomAccessBuffer(object):
         self.buffer = b''
 
     def _read_until(self, newpos):
+
         if newpos is None:
             buf = self.reader.read()
+        elif len(self.buffer) >= newpos:
+            # already have what we need
+            return
         else:
+
             buf = self.reader.read(newpos - len(self.buffer))
 
         self.buffer = buf if not self.buffer else self.buffer + buf

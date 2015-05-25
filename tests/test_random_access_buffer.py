@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import BytesIO, BufferedReader
 
 import pytest
 from uz.util import RandomAccessBuffer
@@ -11,7 +11,7 @@ def val():
 
 @pytest.fixture
 def stream(val):
-    return StringIO(val)
+    return BufferedReader(BytesIO(val))
 
 
 @pytest.fixture
@@ -33,3 +33,12 @@ def test_random_read(rabuf):
     assert rabuf[3] == 'd'
     assert rabuf[-2] == 'y'
     assert rabuf[28:30] == 'cd'
+
+
+def test_slices(rabuf, val):
+    assert rabuf[:2] == 'ab'
+    assert rabuf[20:] == 'uvwxyz' + 'abcdefghijklmnopqrstuvwxyz' * 999
+    assert rabuf[:-2] == ('abcdefghijklmnopqrstuvwxyz' * 999 +
+                          'abcdefghijklmnopqrstuvwx')
+    assert rabuf[:] == val
+    assert rabuf[:2] == 'ab'
