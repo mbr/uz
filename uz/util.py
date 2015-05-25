@@ -83,8 +83,11 @@ class DecompressingReader(io.RawIOBase):
                 break
 
             rbuf = self.source.read(self.bufsize)
+            if not rbuf:
+                return 0
+
             chunk = self.decompress(rbuf)
-            if chunk or not rbuf:
+            if chunk:
                 break
 
         rv, self._dbug = chunk[:blen], chunk[blen:]
