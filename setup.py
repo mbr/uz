@@ -12,7 +12,7 @@ def read(fname):
 
 setup(
     name='uz',
-    version='0.1dev1',
+    version='0.1.dev1',
     description='uz extracts files of all sorts',
     long_description=read('README.rst'),
     author='Marc Brinkmann',
