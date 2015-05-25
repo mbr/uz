@@ -14,6 +14,7 @@ It does not infer file-types from file endings but analyzes headers instead:
 
 .. code-block:: sh
 
+   $ mv sample.tar.xz nothing-in-the-filename
    $ uz -l nothing-in-the-filename
    sample_data/
    sample_data/bar
