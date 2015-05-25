@@ -52,6 +52,9 @@ class DecompressingReader(io.RawIOBase):
         self.bufsize = bufsize
         self._dbuf = None
 
+    def readable(self):
+        return True
+
     def readinto(self, b):
         blen = len(b)
         while True:
@@ -67,9 +70,6 @@ class DecompressingReader(io.RawIOBase):
         rv, self._dbug = chunk[:blen], chunk[blen:]
         b[:len(rv)] = rv
         return len(rv)
-
-    def readable(self):
-        return True
 
 
 class GzipReader(io.RawIOBase):
