@@ -45,7 +45,7 @@ class RandomAccessBuffer(object):
         return self.buffer[pos]
 
 
-class DecompressingReader(io.IOBase):
+class DecompressingReader(io.RawIOBase):
     def __init__(self, decompress, source, bufsize=4096):
         self.source = source
         self.decompress = decompress
