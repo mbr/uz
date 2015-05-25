@@ -1,4 +1,9 @@
 class RandomAccessBuffer(object):
+    """Allow random read access over a stream.
+
+    :param reader: A buffered reader (must have a .read() method that returns
+                   exactly n bytes upon read, provided there are enough left).
+    """
     def __init__(self, reader):
         self.reader = reader
         self.buffer = b''
@@ -9,7 +14,7 @@ class RandomAccessBuffer(object):
         else:
             buf = self.reader.read(newpos - len(self.buffer))
 
-        self.buffer += buf
+        self.buffer = buf if not self.buffer else self.buffer + buf
         return buf
 
     def __getitem__(self, pos):
