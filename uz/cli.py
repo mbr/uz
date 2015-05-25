@@ -51,8 +51,10 @@ def uz(files, analyze_only, debug, verbose, action='extract'):
         if not nesting[-1].archive:
             raise RuntimeError('Non-archive extraction unsupported atm')
 
-        stdin = file
-        file.seek(0)
+
+        # repoen
+        stdin = open(fn, 'rb')
+        stdin.seek(0)
         while cmds:
             cmd = cmds.pop(0)
             stdout = subprocess.PIPE if cmds else None
