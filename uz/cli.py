@@ -24,12 +24,13 @@ def warn(msg):
 @click.option('-A', '--analyze-only', is_flag=True)
 @click.option('-D', '--debug', is_flag=True)
 @click.option('-v', '--verbose', is_flag=True)
+@click.option('-f', '--force', is_flag=True)
 @click.option('-k', '--keep', is_flag=True)
 @click.option('-l', '--list', 'action', flag_value='list')
 @click.option('-x', '--extract', 'action', flag_value='extract', default=True)
 @click.argument('files', nargs=-1,
                 type=click.Path(dir_okay=False, exists=True))
-def uz(files, analyze_only, debug, verbose, action, keep):
+def uz(files, analyze_only, debug, verbose, action, keep, force):
     global show_info
     show_info = debug or analyze_only
 
@@ -68,10 +69,10 @@ def uz(files, analyze_only, debug, verbose, action, keep):
             continue
 
         if single_file:
-            if os.path.exists(single_file) and not click.confirm(
+            if os.path.exists(single_file) and not (force or click.confirm(
                 '{} already exists, do you wish to overwrite?'
                 .format(single_file)
-            ):
+            )):
                 continue
 
         # repoen
@@ -84,6 +85,7 @@ def uz(files, analyze_only, debug, verbose, action, keep):
                 stdout = subprocess.PIPE
             elif single_file:
                 stdout = open(single_file, 'wb')
+                click.echo('extracting {}'.format(single_file), err=True)
             else:
                 # just regular output here
                 stdout = None
