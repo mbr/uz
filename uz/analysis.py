@@ -54,6 +54,10 @@ class FormatHeader(object):
         return unicode(self).encode('utf8')
 
 
+class ArchiveHeader(FormatHeader):
+    archive = True
+
+
 class BZipHeader(FormatHeader):
     name = 'BZip'
     compression = True
@@ -148,10 +152,9 @@ class GZipHeader(FormatHeader):
         return GzipReader(file)
 
 
-class ZipHeader(FormatHeader):
+class ZipHeader(ArchiveHeader):
     name = 'zipfile'
     compression = True
-    archive = True
     streamable = False
     file_ending = '.zip'
 
@@ -180,10 +183,9 @@ class ZipHeader(FormatHeader):
         return zip_cmd
 
 
-class TarHeader(FormatHeader):
+class TarHeader(ArchiveHeader):
     name = 'tarfile'
     compression = False
-    archive = True
     file_ending = '.tar'
 
     @classmethod
@@ -214,10 +216,9 @@ class TarHeader(FormatHeader):
         return tar_cmd
 
 
-class RARHeader(FormatHeader):
+class RARHeader(ArchiveHeader):
     name = 'rarfile'
     compression = True
-    archive = True
     streamable = False
     file_ending = '.rar'
 
