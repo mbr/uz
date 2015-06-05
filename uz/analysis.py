@@ -214,12 +214,53 @@ class TarHeader(FormatHeader):
         return tar_cmd
 
 
+class RARHeader(FormatHeader):
+    name = 'rarfile'
+    compression = True
+    archive = True
+    streamable = False
+    file_ending = '.rar'
+
+    HEADER_V4 = b'\x52\x61\x72\x21\x1A\x07\x00'
+    HEADER_V5 = b'\x52\x61\x72\x21\x1A\x07\x01\x00'
+
+    @classmethod
+    def from_buf(cls, buf):
+        if buf[:len(cls.HEADER_V4)] == cls.HEADER_V4:
+            hfmt = cls()
+            hfmt.extras['format_version'] = '4.x'
+        elif buf[:len(cls.HEADER_V5)] == cls.HEADER_V5:
+            hfmt = cls()
+            hfmt.extras['format_version'] = '4.x'
+        else:
+            return None
+
+        return hfmt
+
+    def get_command(cls, action, cmd_args, parts):
+        parts.pop()
+
+        rar_cmd = ['unrar', '-ierr', '-p-', '-o+', '-y']
+
+        if action == 'list':
+            if cmd_args['verbose']:
+                rar_cmd.append('v')
+            else:
+                rar_cmd.append('l')
+        else:
+            rar_cmd.append('x')
+
+        rar_cmd.append(None)
+
+        return rar_cmd
+
 formats = [
     XZHeader,
     GZipHeader,
     BZipHeader,
     ZipHeader,
     TarHeader,
+    RARHeader,
 ]
 
 
