@@ -36,8 +36,8 @@ Supported fileformats
 ---------------------
 
 It's fairly easy to add another archive or compression format to ``uz``; right
-now it supports ``.xz``, ``.bz2``, ``.gz`` and ``.zip``, ``.tar`` -- as well as
-all combinations of those.
+now it supports  ``.bz2``, ``.gz``, ``.xz`` and ``.7z``, ``.rar``, ``.tar``,
+``.zip``, -- as well as all combinations of those.
 
 More formats are added as soon as the author runs into a file he needs to
 extract or via pull request.
