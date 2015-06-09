@@ -255,6 +255,35 @@ class RARHeader(ArchiveHeader):
 
         return rar_cmd
 
+
+class SevenZipHeader(ArchiveHeader):
+    name = '7zfile'
+    compression = True
+    streamable = False
+    file_ending = '.7z'
+
+    HEADER = b'\x37\x7A\xBC\xAF\x27\x1C'
+
+    @classmethod
+    def from_buf(cls, buf):
+        if buf[:len(cls.HEADER)] == cls.HEADER:
+            return cls()
+
+    def get_command(cls, action, cmd_args, parts):
+        parts.pop()
+
+        sz_cmd = ['7z']
+
+        if action == 'list':
+            sz_cmd.append('l')
+        else:
+            sz_cmd.append('x')
+
+        sz_cmd.append(None)
+
+        return sz_cmd
+
+
 formats = [
     XZHeader,
     GZipHeader,
@@ -262,6 +291,7 @@ formats = [
     ZipHeader,
     TarHeader,
     RARHeader,
+    SevenZipHeader,
 ]
 
 
