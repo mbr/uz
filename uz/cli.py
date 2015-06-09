@@ -91,6 +91,8 @@ def uz(files, analyze_only, debug, verbose, action, keep, force):
                 # just regular output here
                 stdout = None
 
+            if debug:
+                click.echo('running {}'.format(' '.join(cmd)))
             proc = subprocess.Popen(cmd, stdin=stdin, stdout=stdout)
             stdin = proc.stdout
 
